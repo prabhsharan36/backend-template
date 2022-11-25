@@ -1,5 +1,5 @@
 // import { getDBQueryManager } from "../core/dataLayes/transaction";
-import { Page } from "../entity/Page";
+import { Page } from "../entity/page.entity";
 import { AppDataSource } from "../loaders/dataSource";
 
 class UserRepository {

@@ -1,4 +1,4 @@
-import { Page } from "../entity/Page";
+import { Page } from "../entity/page.entity";
 import cls from "../plugins/cls";
 import { AppDataSource } from "../loaders/dataSource";
 

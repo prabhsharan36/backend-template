@@ -1,7 +1,7 @@
 import "reflect-metadata"
 import _ from "lodash";
 import { DataSource } from "typeorm"
-import { Page } from "../entity/Page";
+import { Page } from "../entity/page.entity";
 
 export const AppDataSource = new DataSource({
     type: "mysql",
