@@ -76,6 +76,7 @@ class DoctorRepository {
         )
         .innerJoin(Service, "service", "service.id = sp.service_id")
         .getRawMany();
+      console.log(result);
       return result;
     } catch (error) {}
   }
