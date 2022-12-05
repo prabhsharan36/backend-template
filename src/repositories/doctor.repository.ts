@@ -25,7 +25,7 @@ class DoctorRepository {
     try {
       const areaIds = await this.nearByAreaIds(areaId);
 
-      const doctorIds = await getQueryManager()
+      let doctorIds: any = await getQueryManager()
         .createQueryBuilder(DoctorVisit, "doctor_visits")
         .select(["doctor.id AS doctorId"])
         .innerJoin(
@@ -51,6 +51,9 @@ class DoctorRepository {
         .getRawMany<{
           doctorId: number;
         }>();
+      doctorIds = doctorIds.map((obj: any) => {
+        return obj.doctorId;
+      });
       return doctorIds;
     } catch (error) {
       console.log(error);
@@ -76,7 +79,6 @@ class DoctorRepository {
         )
         .innerJoin(Service, "service", "service.id = sp.service_id")
         .getRawMany();
-      console.log(result);
       return result;
     } catch (error) {}
   }
