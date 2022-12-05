@@ -35,7 +35,7 @@ class DoctorController {
       specialization_country: {
         sluggable_types: ["Specialization", "Country"],
         with_sluggable: true,
-        async callback_validation (slugs: any) {
+        async callback_validation(slugs: any) {
           const specialization = await AppDataSource.createQueryBuilder()
             .select("specializations.has_country_page")
             .from(Specialization, "specializations")
@@ -60,13 +60,18 @@ class DoctorController {
   // }
 
   static async getAreaDoctorIds(req: Request, res: Response) {
-    const doctorIds = await DoctorService.getAreaDoctorIds(req.body.areaId, req.body.serviceId);
+    const doctorIds = await DoctorService.getAreaDoctorIds(
+      parseInt(req?.query?.areaId as string, 10),
+      parseInt(req?.query?.serviceId as string, 10)
+    );
 
     res.status(200).json(doctorIds);
   }
 
   static async getListingPages(req: Request, res: Response) {
-    const doctorIds = await DoctorService.getListingPages(req.body.doctorId);
+    const doctorIds = await DoctorService.getListingPages(
+      parseInt(req?.query?.doctorId as string, 10)
+    );
 
     res.status(200).json(doctorIds);
   }
