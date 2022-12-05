@@ -7,17 +7,20 @@ import {
     UpdateDateColumn, 
   } from "typeorm";
   
-  @Entity({ name: "areas" })
-  export class Area {
+  @Entity({ name: "service_providers" })
+  export class ServiceProvider {
     @PrimaryColumn()
     id!: number;
   
     @Column()
-    name!: string;
+    service_providers_id!: number;
   
     @Column() 
-    city_id!: number;
-    
+    service_providers_type!: string;
+  
+    @Column()
+    service_id!: number;
+  
     @CreateDateColumn()
     created_at!: Date;
   
@@ -26,17 +29,5 @@ import {
   
     @DeleteDateColumn()
     deleted_at!: Date;
-
-    @Column()
-    latitude!: number;
-    
-    @Column()
-    longitude!: number;
-  
-    @Column()
-    place_id!: string;
-  
-    @Column({ type: "simple-json" })
-    metadata!: any;
   }
   

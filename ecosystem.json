@@ -1,0 +1,14 @@
+{
+  "apps": [
+    {
+      "name": "backend-new",
+      "script": "build/app.js",
+      "watch": true,
+      "namespace": "backend-new",
+      "env": {
+        "NODE_ENV": "production",
+        "PORT": 8081
+      }
+    }
+  ]
+}

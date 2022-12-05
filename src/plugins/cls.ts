@@ -14,7 +14,7 @@ const nsid = "a6a29a6f-6747-4b5f-b99f-07ee96e32f88";
 const ns = cls.createNamespace(nsid);
 
 // Express.js middleware that is responsible for initializing the context for each request.
-function middleware(req: any, res: any, next: () => any) {
+function middleware(_req: any, _res: any, next: () => any) {
   ns.run(() => next());
 }
 

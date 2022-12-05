@@ -17,7 +17,6 @@ import {
   
     @Column() 
     parent_id!: number;
-    
 
     @Column() 
     facility_listing_type!: string;
