@@ -27,7 +27,7 @@ class CostRepository extends PageController implements PageValidation {
   constructor(req: Request, res: Response) {
     super(req, res, true); // validation = true
     // console.log(this.pageType);
-    
+
   }
 
   async listing(_req: any, res: any) {

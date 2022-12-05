@@ -35,7 +35,7 @@ class DoctorController {
       specialization_country: {
         sluggable_types: ["Specialization", "Country"],
         with_sluggable: true,
-        callback_validation: async function (slugs: any) {
+        async callback_validation (slugs: any) {
           const specialization = await AppDataSource.createQueryBuilder()
             .select("specializations.has_country_page")
             .from(Specialization, "specializations")

@@ -2,6 +2,8 @@ import "reflect-metadata";
 import _ from "lodash";
 import { DataSource } from "typeorm";
 
+const rootDir = process.env.NODE_ENV === "development" ? "src" : "build";
+
 export const AppDataSource = new DataSource({
   type: "mysql",
   host: process.env.MYSQL_HOST,
@@ -11,7 +13,7 @@ export const AppDataSource = new DataSource({
   database: process.env.MYSQL_DATABASE,
   synchronize: false,
   logging: false,
-  entities: [`src/entity/**/*.{js,ts}`],
+  entities: [`${rootDir}/entity/**/*.{js,ts}`],
   migrations: [],
   subscribers: [],
 });

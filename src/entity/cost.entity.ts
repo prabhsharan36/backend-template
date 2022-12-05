@@ -3,24 +3,24 @@ import {
     PrimaryColumn,
     Column,
     CreateDateColumn,
-    UpdateDateColumn, 
+    UpdateDateColumn,
   } from "typeorm";
-  
+
   @Entity({ name: "costs" })
   export class Cost {
     @PrimaryColumn()
     id!: number;
-  
+
     @Column()
     costable_id!: number;
-  
+
     @Column()
     costable_type!: string;
-  
-    @Column() 
+
+    @Column()
     location_id!: number;
-    
-    @Column() 
+
+    @Column()
     location_type!: string;
 
     @Column()
@@ -34,10 +34,9 @@ import {
 
     @CreateDateColumn()
     created_at!: Date;
-  
+
     @UpdateDateColumn()
     updated_at!: Date;
-  
+
 
   }
-  

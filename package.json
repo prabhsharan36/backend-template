@@ -4,10 +4,10 @@
   "description": "Clinicspots Backend",
   "main": "build/app.js",
   "scripts": {
-    "clean": "rimraf dist/*",
+    "clean": "rimraf build/*",
     "lint": "tslint -c tslint.json -p tsconfig.json --fix",
     "tsc": "tsc",
-    "build": "npm-run-all clean tsc",
+    "build": "NODE_ENV=production npm-run-all clean tsc",
     "build-dev": "NODE_ENV=development npm-run-all clean lint tsc",
     "dev:start": "npm-run-all build start",
     "dev:dist": "nodemon --watch src -e ts,ejs --exec npm run dev:start",

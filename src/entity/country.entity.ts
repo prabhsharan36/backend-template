@@ -4,18 +4,18 @@ import {
     Column,
     CreateDateColumn,
     DeleteDateColumn,
-    UpdateDateColumn, 
+    UpdateDateColumn,
   } from "typeorm";
-  
+
   @Entity({ name: "countries" })
   export class Country {
     @PrimaryColumn()
     id!: number;
-  
+
     @Column()
     code!: string;
-  
-    @Column() 
+
+    @Column()
     name!: string;
 
     @Column()
@@ -23,11 +23,10 @@ import {
 
     @CreateDateColumn()
     created_at!: Date;
-  
+
     @UpdateDateColumn()
     updated_at!: Date;
-  
+
     @DeleteDateColumn()
     deleted_at!: Date;
   }
-  

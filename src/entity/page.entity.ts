@@ -4,7 +4,7 @@ import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
-  UpdateDateColumn, 
+  UpdateDateColumn,
 } from "typeorm";
 
 @Entity({ name: "pages" })
@@ -15,7 +15,7 @@ export class Page {
   @Column()
   url!: string;
 
-  @Column() 
+  @Column()
   title!: string;
 
   @Column()

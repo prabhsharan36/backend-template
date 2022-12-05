@@ -52,9 +52,9 @@ class ValidatePageTypeAndSlugs {
 
   protected validateSlugs(slugs: any) {
     if (slugs.length > 0) {
-      let sluggableTypes = _.map(slugs, "sluggable_type");
+      const sluggableTypes = _.map(slugs, "sluggable_type");
 
-      for (let pageType in this.pageRulesObj) {
+      for (const pageType in this.pageRulesObj) {
         const rules = this.pageRulesObj[pageType];
 
         if (rules.sluggable_types.length === sluggableTypes.length) {

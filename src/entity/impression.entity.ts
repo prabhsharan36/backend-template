@@ -3,9 +3,9 @@ import {
     PrimaryColumn,
     Column,
     CreateDateColumn,
-    UpdateDateColumn, 
+    UpdateDateColumn,
   } from "typeorm";
-  
+
   @Entity({ name: "impressions" })
   export class Impression {
     @PrimaryColumn()
@@ -13,15 +13,14 @@ import {
 
     @Column()
     impressionable_id!: number;
-  
+
     @Column()
     count!: number;
-  
+
     @CreateDateColumn()
     created_at!: Date;
-  
+
     @UpdateDateColumn()
     updated_at!: Date;
-  
+
   }
-  

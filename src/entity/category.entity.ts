@@ -4,31 +4,30 @@ import {
     Column,
     CreateDateColumn,
     DeleteDateColumn,
-    UpdateDateColumn, 
+    UpdateDateColumn,
   } from "typeorm";
-  
+
   @Entity({ name: "categories" })
   export class Category {
     @PrimaryColumn()
     id!: number;
-  
+
     @Column()
     name!: string;
-  
-    @Column() 
+
+    @Column()
     parent_id!: number;
 
-    @Column() 
+    @Column()
     facility_listing_type!: string;
 
     @CreateDateColumn()
     created_at!: Date;
-  
+
     @UpdateDateColumn()
     updated_at!: Date;
-  
+
     @DeleteDateColumn()
     deleted_at!: Date;
 
   }
-  

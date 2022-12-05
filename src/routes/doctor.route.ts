@@ -49,7 +49,7 @@ export default router;
 //   message: string,
 //   data: T
 // }
- 
+
 // enum SednGripsEmailStatus {
 //   IN_QUEUE = "IN_QUEUE"
 // }
@@ -62,7 +62,7 @@ export default router;
 // const res: SendGridSendEmailAPIResponse = {};
 
 // if (res.data.status == SednGripsEmailStatus.IN_QUEUE) {
-  
+
 // }
 
 
@@ -91,7 +91,7 @@ export default router;
 //         if (pageType == DoctorListingPageType.service_city) {
 //           doctorIds =this.getDoctorIdsForServiceCityListing();
 //         } else {
-          
+
 //         }
 
 //         const doctors = this.getDoctorDetailsForListing(doctorIds);

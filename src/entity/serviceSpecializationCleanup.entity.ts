@@ -3,43 +3,42 @@ import {
     PrimaryColumn,
     Column,
     CreateDateColumn,
-    UpdateDateColumn, 
+    UpdateDateColumn,
   } from "typeorm";
-  
+
   @Entity({ name: "service_specialization_cleanup" })
   export class ServiceSpecializationCleanup {
     @PrimaryColumn()
     id!: number;
-    
-    @Column() 
+
+    @Column()
     entity_id!: number;
 
     @Column()
     entity_type!: string;
-  
+
     @Column()
     entity_slug!: string;
 
-    @Column() 
+    @Column()
     replace_with_id!: string;
 
-    @Column() 
+    @Column()
     replace_with_type!: string;
 
-    @Column() 
+    @Column()
     replace_with_name!: string;
 
-    @Column() 
+    @Column()
     replace_with_slug!: string;
 
-    @Column() 
+    @Column()
     action!: string;
 
     @CreateDateColumn()
     created_at!: Date;
-  
+
     @UpdateDateColumn()
     updated_at!: Date;
-  
+
   }
-  

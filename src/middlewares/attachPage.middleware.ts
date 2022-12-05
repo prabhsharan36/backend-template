@@ -5,7 +5,7 @@ import errorHandler from "./errorHandler";
 import BadRequestException from "../exceptions/badRequest.exception";
 
 export default async function (req: any, _res: any, next: any) {
-  
+
   if (!req.header("X-PUBLIC-URL")) {
     errorHandler(new BadRequestException("X-PUBLIC-URL not provided"), _res);
   } else {

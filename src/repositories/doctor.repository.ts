@@ -13,7 +13,7 @@ class DoctorRepository {
       .select(["area.metadata"])
       .where("id = :areaId", { areaId })
       .getRawOne();
-    let nearByAreaIds = metadata?.area_metadata?.nearby_localities?.map(
+    const nearByAreaIds = metadata?.area_metadata?.nearby_localities?.map(
       (obj: { id: number }) => {
         return obj.id;
       }
