@@ -1,5 +1,4 @@
 import _ from "lodash";
-import { NotFound } from "../exceptions";
 import { container } from "../loaders/container";
 
 class ValidatePageTypeAndSlugs {

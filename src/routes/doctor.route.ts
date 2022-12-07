@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { container } from "../loaders/container";
+// import { container } from "../loaders/container";
 const router = Router();
 
-const docController = container.cradle.doctorController;
+// const docController = container.cradle.doctorController;
 
-router.get("/:specialization_or_service/:country_or_city", docController.listing);
+// router.get("/:specialization_or_service/:country_or_city", docController.listing);
 
 // router.get("/:specialization_or_service/:city/:area?", (req, res) => {
 //   const doctorController: any = new DoctorController(req, res);

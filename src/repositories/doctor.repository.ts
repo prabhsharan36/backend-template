@@ -1,4 +1,3 @@
-import { indexOf } from "lodash";
 import { getQueryManager } from "../core/dataLayes/manager";
 import { Area } from "../entity/area.entity";
 // import { Doctor } from "../entity/doctor.entity";

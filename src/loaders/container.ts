@@ -6,7 +6,7 @@ import SlugRepository from "../repositories/slug.repository";
 import DoctorService from "../services/doctor.service";
 import { NotFound } from "../exceptions";
 import { internalError } from "../utils/responses.util";
-import FacilityController from "../controllers/facility.controller";
+// import FacilityController from "../controllers/facility.controller";
 
 const registrations = {
   /**
@@ -24,7 +24,7 @@ const registrations = {
    * Controllers
    */
   doctorController: asClass(DoctorController).classic().singleton(),
-  facilityController: asClass(FacilityController).classic().singleton(),
+  // facilityController: asClass(FacilityController).classic().singleton(),
 
   /**
    * Helpers

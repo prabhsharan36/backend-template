@@ -2,13 +2,13 @@ import { AppDataSource } from "../loaders/dataSource";
 import { Request, Response } from "express";
 import { Specialization } from "../entity/specialization.entity";
 import { container } from "../loaders/container";
-import { internalError } from "../utils/responses.util";
+// import { internalError } from "../utils/responses.util";
 class DoctorController {
   protected doctorService = container.cradle.doctorService;
   protected validatePageSlugs = container.cradle.validatePageTypeAndSlugs;
 
   constructor() {
-    this.listing = this.listing.bind(this);
+    // this.listing = this.listing.bind(this);
     this.getListingPages = this.getListingPages.bind(this);
     this.getAreaDoctorIds = this.getAreaDoctorIds.bind(this);
   }
@@ -50,16 +50,16 @@ class DoctorController {
     };
   }
 
-  async listing(req: Request, res: Response) {
-    try {
-      const PageType = await this.validatePageSlugs.execute(
-        req.params,
-        this.validationRules()
-      );
-    } catch (err: any) {
-      return err.handle?.(res) || internalError(res, err.message);
-    }
-  }
+  // async listing(req: Request, res: Response) {
+  //   try {
+  //     const PageType = await this.validatePageSlugs.execute(
+  //       req.params,
+  //       this.validationRules()
+  //     );
+  //   } catch (err: any) {
+  //     return err.handle?.(res) || internalError(res, err.message);
+  //   }
+  // }
 
   async getAreaDoctorIds(req: Request, res: Response) {
     const doctorIds = await this.doctorService.getAreaDoctorIds(
