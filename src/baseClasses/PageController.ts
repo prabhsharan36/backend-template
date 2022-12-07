@@ -1,6 +1,6 @@
 import { Page } from "../entity/page.entity";
 import { Request, Response } from "express";
-import ValidatePageTypeAndSlugs from "./ValidatePageTypeAndSlugs";
+import ValidatePageTypeAndSlugs from "../middlewares/validatePageTypeAndSlugs.middleware";
 import errorHandler from "../middlewares/errorHandler";
 import { NotFound } from "../exceptions";
 

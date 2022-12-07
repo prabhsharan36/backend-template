@@ -2,6 +2,11 @@
 import { Application } from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
+import { registerContainer } from "./container";
+/**
+ * call this function before importing the router
+ */
+registerContainer();
 import routes from "../routes";
 import cls from "../plugins/cls";
 // import errorHandler from "../middlewares/errorHandler";
@@ -10,7 +15,6 @@ import cls from "../plugins/cls";
 // import logRequest from "../middlewares/logRequest";
 
 export default ({ app }: { app: Application }) => {
-
   /*
    * Enable Cross Origin Resource Sharing to all origins by default
    */
@@ -22,6 +26,9 @@ export default ({ app }: { app: Application }) => {
   // Helps set request scoped properties or methods.
   // Every request has it's own scoped preventing cross request population of values.
   app.use(cls.middleware);
+
+  // Add the middleware, passing it your Awilix container.
+  // This will attach a scoped container on the context.
 
   // Load all the routes
   app.use(routes);

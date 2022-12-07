@@ -5,7 +5,7 @@ import errorHandler from "./errorHandler";
 export default async function (_req: any, res: any, next: any) {
   const Page = cls.get("page");
 
-  if (!Page?.is_active) {
+  if (typeof Page?.a !== "undefined" && !Page?.is_active) {
     // when page is deactivated
     errorHandler(new NotFound(), res);
   }

@@ -2,12 +2,9 @@ import { Application } from "express";
 import expressLoader from "./express";
 import Logger from "./logger";
 import { AppDataSource } from "./dataSource";
-import { registerContainer } from "./container";
 
 export default async ({ app }: { app: Application }) => {
   Logger.info(`The current environment is in ${process.env.NODE_ENV} mode`);
-
-  registerContainer();
 
   /**
    * Initializing TypeORM Connection

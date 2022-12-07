@@ -1,3 +1,4 @@
+import { indexOf } from "lodash";
 import { getQueryManager } from "../core/dataLayes/manager";
 import { Area } from "../entity/area.entity";
 // import { Doctor } from "../entity/doctor.entity";
@@ -7,7 +8,7 @@ import { Service } from "../entity/service.entity";
 import { ServiceProvider } from "../entity/serviceProvider.entity";
 // import { SpecializationOwner } from "../entity/specializationOwner.entity";
 class DoctorRepository {
-  static async nearByAreaIds(areaId: number) {
+  async nearByAreaIds(areaId: number) {
     const metadata = await getQueryManager()
       .createQueryBuilder(Area, "area")
       .select(["area.metadata"])
@@ -21,7 +22,7 @@ class DoctorRepository {
     nearByAreaIds.push(areaId);
     return nearByAreaIds;
   }
-  static async getAreaDoctorIds(areaId: number, serviceId: number) {
+  async getAreaDoctorIds(areaId: number, serviceId: number, doctorId: number) {
     try {
       const areaIds = await this.nearByAreaIds(areaId);
 
@@ -54,13 +55,14 @@ class DoctorRepository {
       doctorIds = doctorIds.map((obj: any) => {
         return obj.doctorId;
       });
-      return doctorIds;
+      const MyPosition = doctorIds.indexOf(doctorId) + 1;
+      return { doctorIds, myPosition: MyPosition };
     } catch (error) {
       console.log(error);
     }
   }
 
-  static async getListingPages(doctorId: number) {
+  async getListingPages(doctorId: number) {
     try {
       const result = await getQueryManager()
         .createQueryBuilder(Area, "area")

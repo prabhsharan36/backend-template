@@ -1,12 +1,10 @@
 import { Router } from "express";
-// import DoctorController from "../controllers/doctor.controller";
-// import { container } from "../loaders/container";
+import { container } from "../loaders/container";
 const router = Router();
 
-// router.get("/:specialization_or_service/:country_or_city", (req, res) => {
-//   const doctorController = new DoctorController(req, res);
-//   doctorController.listing(req, res);
-// });
+const docController = container.cradle.doctorController;
+
+router.get("/:specialization_or_service/:country_or_city", docController.listing);
 
 // router.get("/:specialization_or_service/:city/:area?", (req, res) => {
 //   const doctorController: any = new DoctorController(req, res);
@@ -64,7 +62,6 @@ export default router;
 // if (res.data.status == SednGripsEmailStatus.IN_QUEUE) {
 
 // }
-
 
 // class DoctorService {
 //     protected slugRepository: SlugRepository;

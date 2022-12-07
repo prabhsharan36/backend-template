@@ -1,17 +1,13 @@
-// import { container } from "../loaders/container";
-import DoctorRepository from "../repositories/doctor.repository";
-
+import { container } from "../loaders/container";
 class DoctorService {
-//   protected doctorRepo = container.resolve("doctorRepository");
+  protected doctorRepo = container.resolve("doctorRepository");
 
-  constructor() {}
-
-  static getAreaDoctorIds(areaId: number, specializationId: number) {
-    return DoctorRepository.getAreaDoctorIds(areaId, specializationId);
+  getAreaDoctorIds(areaId: number, specializationId: number, doctorId: number) {
+    return this.doctorRepo.getAreaDoctorIds(areaId, specializationId, doctorId);
   }
 
-  static getListingPages(doctorId: number) {
-    return DoctorRepository.getListingPages(doctorId);
+  getListingPages(doctorId: number) {
+    return this.doctorRepo.getListingPages(doctorId);
   }
 }
 

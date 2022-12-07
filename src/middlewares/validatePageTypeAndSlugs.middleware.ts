@@ -1,53 +1,31 @@
-import { Slug } from "../entity/slug.entity";
-import { AppDataSource } from "../loaders/dataSource";
 import _ from "lodash";
-// import errorHandler from "../middlewares/errorHandler";
-// import { NotFound } from "../exceptions";
-import { Response } from "express";
+import { NotFound } from "../exceptions";
+import { container } from "../loaders/container";
 
 class ValidatePageTypeAndSlugs {
   protected isValid = false;
   protected pageRulesObj: any;
-  protected pageRulesArr: any;
   protected slugValues: any;
-  protected withSluggable = false;
-  protected res: any;
   public slugs: any;
   public pageType: any;
 
-  constructor(slugValues: any, pageRules: any, res: Response) {
-    this.slugValues = slugValues;
-    this.pageRulesObj = pageRules;
-    this.res = res;
-  }
+  protected slugRepo = container.cradle.slugRepository;
+  protected notFound = container.cradle.notFound;
 
-  public async run() {
-    const result = await this.execute();
-    return result;
-  }
-
-  public async execute() {
-    /* Fetch slugs from DB in order */
-    await AppDataSource.createQueryBuilder()
-      .select("slugs")
-      .from(Slug, "slugs")
-      .where("slug IN(:slugs)", { slugs: Object.values(this.slugValues) })
-      .orderBy("slugs.sluggable_type", "DESC")
-      .getMany()
-      .then((slugs) => {
-        this.validateSlugs(slugs);
-        this.validateCallback(slugs);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    if (this.isValid && this.pageRulesObj[this.pageType].with_sluggable) {
-      // TODO
-      // 		$slugs->load('sluggable');
+  public async execute(slugValues: any, pageRules: any, shouldRetry?: boolean) {
+    if (!shouldRetry) {
+      this.slugValues = slugValues;
+      this.pageRulesObj = pageRules;
     }
-    return {
-      pageType: this.pageType,
-    };
+
+    /* Fetch slugs from DB in order */
+    const SLUGS = await this.slugRepo.getSlugsBySlugs(this.slugValues);
+    this.validateSlugs(SLUGS);
+    this.validateCallback(SLUGS);
+    if (typeof this.pageType !== "string") {
+      throw this.notFound;
+    }
+    return this.pageType;
   }
 
   protected validateSlugs(slugs: any) {
@@ -97,7 +75,7 @@ class ValidatePageTypeAndSlugs {
       this.isValid = Closure instanceof Function ? await Closure(slugs) : true;
       if (!this.isValid) {
         delete this.pageRulesObj[this.pageType];
-        this.execute();
+        this.execute(null, null, true);
       }
     }
   }

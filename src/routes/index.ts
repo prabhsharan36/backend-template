@@ -1,29 +1,17 @@
 import { Router } from "express";
 const router = Router();
-import DoctorController from "../controllers/doctor.controller";
-
 import config from "../config";
 import abortOrRedirectPageIfNeededMiddleware from "../middlewares/abortOrRedirectPageIfNeeded.middleware";
 import attachPageMiddleware from "../middlewares/attachPage.middleware";
+import { container } from "../loaders/container";
 import api from "./api";
-// import { container } from "../loaders/container";
 
-// router.get('/test', async (req, res) => {
-//     container.cradle.doctorService.test();
-//     return res.send("done")
-// })
+const docController = container.cradle.doctorController;
 /**
  * API routes
  */
-
-router.get("/api/doctor/listing/pages", DoctorController.getListingPages);
-
-router.get("/api/doctor/listing/area", DoctorController.getAreaDoctorIds);
-// router.get(
-//   "/api/doctor/listing-pages",
-//   container.resolve('doctorController').getListingPages
-// );
-//  router.get("/api/doctors/area", container.cradle.doctorController.listing);
+router.get("/api/doctor/listing/area", docController.getAreaDoctorIds);
+router.get("/api/doctor/listing/pages", docController.getListingPages);
 
 router.use(
   config.api.prefix,

@@ -1,24 +1,19 @@
-// import { Page } from "../entity/page.entity";
 import { AppDataSource } from "../loaders/dataSource";
-// import PageController from "../baseClasses/PageController";
 import { Request, Response } from "express";
-// import PageValidation from "../interfaces/pageValidation.interface";
 import { Specialization } from "../entity/specialization.entity";
-import DoctorService from "../services/doctor.service";
-// import { container } from "../loaders/container";
-
+import { container } from "../loaders/container";
+import { internalError } from "../utils/responses.util";
 class DoctorController {
-  // protected doctorService = container.resolve("doctorService");
-  // constructor({ doctorService }) {
-  //   this.doctorService = doctorService;
-  // }
+  protected doctorService = container.cradle.doctorService;
+  protected validatePageSlugs = container.cradle.validatePageTypeAndSlugs;
 
-  // TODO (From public to protected)
-  public slugsToValidate(req: Request) {
-    return req.params;
+  constructor() {
+    this.listing = this.listing.bind(this);
+    this.getListingPages = this.getListingPages.bind(this);
+    this.getAreaDoctorIds = this.getAreaDoctorIds.bind(this);
   }
 
-  public validationRules() {
+  protected validationRules() {
     return {
       service_country: {
         sluggable_types: ["Service", "Country"],
@@ -55,24 +50,30 @@ class DoctorController {
     };
   }
 
-  // constructor(req: Request, res: Response) {
-  //   super(req, res, true); // validation = true
-  // }
+  async listing(req: Request, res: Response) {
+    try {
+      const PageType = await this.validatePageSlugs.execute(
+        req.params,
+        this.validationRules()
+      );
+    } catch (err: any) {
+      return err.handle?.(res) || internalError(res, err.message);
+    }
+  }
 
-  static async getAreaDoctorIds(req: Request, res: Response) {
-    const doctorIds = await DoctorService.getAreaDoctorIds(
+  async getAreaDoctorIds(req: Request, res: Response) {
+    const doctorIds = await this.doctorService.getAreaDoctorIds(
       parseInt(req?.query?.areaId as string, 10),
-      parseInt(req?.query?.serviceId as string, 10)
+      parseInt(req?.query?.serviceId as string, 10),
+      parseInt(req?.query?.doctorId as string, 10)
     );
-
     res.status(200).json(doctorIds);
   }
 
-  static async getListingPages(req: Request, res: Response) {
-    const doctorIds = await DoctorService.getListingPages(
+  async getListingPages(req: Request, res: Response) {
+    const doctorIds = await this.doctorService.getListingPages(
       parseInt(req?.query?.doctorId as string, 10)
     );
-
     res.status(200).json(doctorIds);
   }
 }

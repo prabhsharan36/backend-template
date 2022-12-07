@@ -1,13 +1,19 @@
-import { createContainer, asClass, Resolver } from "awilix";
-// import DoctorController from "../controllers/doctor.controller";
+import { createContainer, asClass, asFunction, Resolver } from "awilix";
+import ValidatePageTypeAndSlugs from "../middlewares/validatePageTypeAndSlugs.middleware";
+import DoctorController from "../controllers/doctor.controller";
 import DoctorRepository from "../repositories/doctor.repository";
+import SlugRepository from "../repositories/slug.repository";
 import DoctorService from "../services/doctor.service";
+import { NotFound } from "../exceptions";
+import { internalError } from "../utils/responses.util";
+import FacilityController from "../controllers/facility.controller";
 
 const registrations = {
   /**
    * Repositories
    */
   doctorRepository: asClass(DoctorRepository).classic().singleton(),
+  slugRepository: asClass(SlugRepository).classic().singleton(),
 
   /**
    * Services
@@ -17,7 +23,25 @@ const registrations = {
   /**
    * Controllers
    */
-  // doctorController: asClass(DoctorController).classic().singleton(),
+  doctorController: asClass(DoctorController).classic().singleton(),
+  facilityController: asClass(FacilityController).classic().singleton(),
+
+  /**
+   * Helpers
+   */
+  validatePageTypeAndSlugs: asClass(ValidatePageTypeAndSlugs)
+    .classic()
+    .singleton(),
+
+  /**
+   * Exceptions
+   */
+  notFound: asClass(NotFound).classic().singleton(),
+
+  /**
+   * Functions
+   */
+  internalError: asFunction(internalError).classic().singleton(),
 };
 
 /**
