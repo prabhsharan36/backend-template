@@ -6,7 +6,7 @@ class SlugRepository {
     const SLUGS = await getQueryManager()
       .createQueryBuilder(Slug, "slugs")
       .select("slugs")
-      .where("slug IN(:slugs)", { slugs: Object.values(slugs) })
+      .where("slug IN (:slugs)", { slugs: Object.values(slugs) })
       .orderBy("slugs.sluggable_type", "DESC")
       .getMany();
 

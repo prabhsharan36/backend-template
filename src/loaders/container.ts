@@ -6,25 +6,34 @@ import SlugRepository from "../repositories/slug.repository";
 import DoctorService from "../services/doctor.service";
 import { NotFound } from "../exceptions";
 import { internalError } from "../utils/responses.util";
-// import FacilityController from "../controllers/facility.controller";
+import FacilityController from "../controllers/facility.controller";
+import CategoryRepository from "../repositories/category.repository";
+import FacilityRepository from "../repositories/facility.repository";
+import FacilityService from "../services/facility.service";
+import AreaRepository from "../repositories/area.respository";
+import { getFacilityListingData } from "../viewModels/facilityListing";
 
 const registrations = {
   /**
    * Repositories
    */
-  doctorRepository: asClass(DoctorRepository).classic().singleton(),
-  slugRepository: asClass(SlugRepository).classic().singleton(),
+  doctorRepo: asClass(DoctorRepository).classic().singleton(),
+  slugRepo: asClass(SlugRepository).classic().singleton(),
+  categoryRepo: asClass(CategoryRepository).classic().singleton(),
+  facitlityRepo: asClass(FacilityRepository).classic().singleton(),
+  areaRepo: asClass(AreaRepository).classic().singleton(),
 
   /**
    * Services
    */
   doctorService: asClass(DoctorService).classic().singleton(),
+  facilityService: asClass(FacilityService).classic().singleton(),
 
   /**
    * Controllers
    */
   doctorController: asClass(DoctorController).classic().singleton(),
-  // facilityController: asClass(FacilityController).classic().singleton(),
+  facilityController: asClass(FacilityController).classic().singleton(),
 
   /**
    * Helpers
@@ -42,6 +51,9 @@ const registrations = {
    * Functions
    */
   internalError: asFunction(internalError).classic().singleton(),
+  getFacilityListingData: asFunction(getFacilityListingData)
+    .classic()
+    .singleton(),
 };
 
 /**

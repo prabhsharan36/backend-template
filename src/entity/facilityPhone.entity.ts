@@ -3,23 +3,20 @@ import {
   PrimaryColumn,
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
   UpdateDateColumn,
+  DeleteDateColumn,
 } from "typeorm";
 
-@Entity({ name: "slugs" })
-export class Slug {
+@Entity({ name: "facility_phones" })
+export class FacilityPhone {
   @PrimaryColumn()
   id!: number;
 
   @Column()
-  sluggable_id!: number;
+  facility_id!: number;
 
   @Column()
-  sluggable_type!: string;
-
-  @Column()
-  slug!: string;
+  phone!: string;
 
   @CreateDateColumn()
   created_at!: Date;
@@ -29,4 +26,8 @@ export class Slug {
 
   @DeleteDateColumn()
   deleted_at!: Date;
+
+  /**
+   * Relationships
+   */
 }

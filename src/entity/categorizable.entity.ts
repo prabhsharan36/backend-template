@@ -7,19 +7,19 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 
-@Entity({ name: "slugs" })
-export class Slug {
+@Entity({ name: "categorizables" })
+export class Categorizable {
   @PrimaryColumn()
   id!: number;
 
   @Column()
-  sluggable_id!: number;
+  categorizable_id!: number;
 
   @Column()
-  sluggable_type!: string;
+  categorizable_type!: string;
 
   @Column()
-  slug!: string;
+  category_id!: number;
 
   @CreateDateColumn()
   created_at!: Date;
