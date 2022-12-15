@@ -12,6 +12,7 @@ import FacilityRepository from "../repositories/facility.repository";
 import FacilityService from "../services/facility.service";
 import AreaRepository from "../repositories/area.respository";
 import { getFacilityListingData } from "../viewModels/facilityListing";
+// import { getImageUrl } from "../services/image.service";
 
 const registrations = {
   /**
@@ -50,6 +51,7 @@ const registrations = {
   /**
    * Functions
    */
+  // getImageUrl: asFunction(getImageUrl).classic().singleton(),
   internalError: asFunction(internalError).classic().singleton(),
   getFacilityListingData: asFunction(getFacilityListingData)
     .classic()

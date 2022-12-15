@@ -2,9 +2,11 @@ import { container } from "../loaders/container";
 import _, { lowerCase } from "lodash";
 import { DoctorVisit } from "../entity/doctorVisit.entity";
 import { getQueryManager } from "../core/dataLayes/manager";
+import { getImageUrl } from "./image.service";
 
 class FacilityService {
   protected facilityRepo = container.cradle.facitlityRepo;
+  // protected getImageUrl = container.cradle.getImageUrl;
   // protected getFacilityListingData = container.cradle.getFacilityListingData;
 
   async listing({ pageType, category, city_state_country, area }) {
@@ -31,13 +33,12 @@ class FacilityService {
           address_line: facility?.facility_address_line,
           additional_address_line: facility?.facility_additional_address_line,
           landmark: facility?.facility_landmark,
-          full_address_line: await getFullAddressAttribute(
+          full_address_line: await this.getFullAddressAttribute(
             facility?.facility_address_line,
             facility?.facility_additional_address_line,
             facility?.facility_landmark
           ),
           text_info: facility?.facility_about,
-
           url:
             facility?.facility_type &&
             facility?.slug_slug &&
@@ -47,15 +48,16 @@ class FacilityService {
                 "/" +
                 facility?.slug_slug
               : null,
-          doctors_count: await getDoctorsCount(facility?.facility_id),
-          map_link: getMapLinkAttribute(
+          doctors_count: await this.getDoctorsCount(facility?.facility_id),
+          logo: this.getLogo(facility?.media_name),
+          map_link: this.getMapLinkAttribute(
             facility?.facility_latitude,
             facility?.facility_longitude
           ),
-          open_status: await getOpenStatusAttribute(
+          open_status: await this.getOpenStatusAttribute(
             facility?.facility_meta_data
           ),
-          "24x7": await get24x7Attribute(facility?.facility_meta_data),
+          "24x7": await this.get24x7Attribute(facility?.facility_meta_data),
           city: {
             name: facility?.city_name,
           },
@@ -75,65 +77,63 @@ class FacilityService {
     );
     return result;
   }
-}
-async function getOpenStatusAttribute(meta_data) {
-  let today_date = new Date();
-  let date =
-    today_date.getFullYear() +
-    "-" +
-    (today_date.getMonth() + 1) +
-    "-" +
-    today_date.getDate();
-  let time =
-    today_date.getHours() +
-    ":" +
-    today_date.getMinutes() +
-    ":" +
-    today_date.getSeconds();
-  let current_time = date + " " + time;
-  const weekday = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
 
-  // const d = new Date();
+  getLogo(mediaName: string) {
+    return { url: getImageUrl(mediaName, "facility_profile_desktop") };
+  }
+
+  async getOpenStatusAttribute(meta_data) {
+    let today_date = new Date();
+    let date =
+      today_date.getFullYear() +
+      "-" +
+      (today_date.getMonth() + 1) +
+      "-" +
+      today_date.getDate();
+    let time =
+      today_date.getHours() +
+      ":" +
+      today_date.getMinutes() +
+      ":" +
+      today_date.getSeconds();
+    let current_time = date + " " + time;
+    const weekday = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+
   let today = weekday[today_date.getDay()];
   let open_hours = meta_data?.open_hours || false;
   let _24x7 = meta_data["24x7"] !== "undefined" ? meta_data["24x7"] : false;
   if (!_24x7) {
-    // This is use to sort open_hours the array according to days
     let _sorted: any[] = [];
     let weekdays: string[] = weekday;
-    // console.log(Object.keys(weekdays));
-
-    // let weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    let today = weekday[today_date.getDay()];
+    let open_hours =
+      meta_data["open_hours"] !== "undefined" ? meta_data["open_hours"] : false;
+    let _24x7 = meta_data["24x7"] !== "undefined" ? meta_data["24x7"] : false;
+    if (!_24x7) {
+      let _sorted: string[] = [];
+      let weekdays: string[] = weekday;
     for (let day in Object.keys(weekdays)) {
-      // console.log(typeof open_hours);
-
-      // if (Object.keys(open_hours)) {
       console.log(Object.keys(open_hours).indexOf(weekdays[day]));
-
       if (Object.keys(open_hours).indexOf(weekdays[day]) > -1) {
         _sorted[day] = Object.keys(open_hours).indexOf(weekdays[day]);
-        // }
       }
     }
     console.log(today, "sorted");
 
-    open_hours = _sorted;
-    let open_days = Object.keys(open_hours); // in sorted order.
-    // console.log(open_days, "opendays");
-
-    /* IF OPENS TODAY */
-    if (today in open_days) {
-      let closing_times = [];
-      let opening_times = [];
-      console.log(open_hours[today]);
+      open_hours = _sorted;
+      let open_days = Object.keys(open_hours); // in sorted order.
+      if (today in open_days) {
+        let closing_times = [];
+        let opening_times = [];
+      }
     
 
       for(let time_slot in open_hours[today]) {
@@ -193,8 +193,8 @@ async function getOpenStatusAttribute(meta_data) {
     return 'Open 24x7';
   }
 }
-async function get24x7Attribute(facility_id) {}
-async function getFullAddressAttribute(
+async get24x7Attribute(facility_id) {}
+async getFullAddressAttribute(
   address_line,
   additional_address_line,
   landmark
@@ -207,30 +207,29 @@ async function getFullAddressAttribute(
   return address_line + additional_address_line + landmark;
 }
 
-async function getDoctorsCount(facility_id: number) {
-  let doctor_count = await getQueryManager()
-    .createQueryBuilder(DoctorVisit, "visits")
-    .select(["visits.doctor_id"])
-    .where("visits.facility_id=:id", {
-      id: facility_id,
-    })
-    .getRawMany();
-  let count = Object.keys(doctor_count).length;
-  return count;
+  async getDoctorsCount(facility_id: number) {
+    let doctor_count = await getQueryManager()
+      .createQueryBuilder(DoctorVisit, "visits")
+      .select(["visits.doctor_id"])
+      .where("visits.facility_id=:id", {
+        id: facility_id,
+      })
+      .getRawMany();
+    let count = Object.keys(doctor_count).length;
+    return count;
+  }
+
+  getMapLinkAttribute(latitude: number, longitude: number): string | null {
+    if (latitude && longitude) {
+      return (
+        "https://www.google.com/maps?saddr=My+Location&daddr=" +
+        latitude +
+        "," +
+        longitude
+      );
+    }
+    return null;
+  }
 }
 
-function getMapLinkAttribute(
-  latitude: number,
-  longitude: number
-): string | null {
-  if (latitude && longitude) {
-    return (
-      "https://www.google.com/maps?saddr=My+Location&daddr=" +
-      latitude +
-      "," +
-      longitude
-    );
-  }
-  return null;
-}
 export default FacilityService;
