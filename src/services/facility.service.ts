@@ -103,35 +103,27 @@ async function getOpenStatusAttribute(meta_data) {
 
   // const d = new Date();
   let today = weekday[today_date.getDay()];
-  // console.log(meta_data);
-
-  // let current_time = now();
-  // let today = current_time.format('l'); // carbon instance
-  let open_hours =
-    meta_data["open_hours"] !== "undefined" ? meta_data["open_hours"] : false;
+  let open_hours = meta_data?.open_hours || false;
   let _24x7 = meta_data["24x7"] !== "undefined" ? meta_data["24x7"] : false;
-  // console.log(Object.keys(open_hours), "open_hours");
-  // console.log(_24x7, "24x7");
-
   if (!_24x7) {
     // This is use to sort open_hours the array according to days
-    let _sorted: string[] = [];
+    let _sorted: any[] = [];
     let weekdays: string[] = weekday;
     // console.log(Object.keys(weekdays));
 
     // let weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     for (let day in Object.keys(weekdays)) {
-      // console.log(typeof weekdays[day]);
+      // console.log(typeof open_hours);
 
       // if (Object.keys(open_hours)) {
-      // console.log(Object.keys(open_hours).indexOf(weekdays[day]) > -1);
+      console.log(Object.keys(open_hours).indexOf(weekdays[day]));
 
       if (Object.keys(open_hours).indexOf(weekdays[day]) > -1) {
-        _sorted[day] = open_hours[day];
+        _sorted[day] = Object.keys(open_hours).indexOf(weekdays[day]);
         // }
       }
     }
-    console.log(_sorted, "sorted");
+    console.log(today, "sorted");
 
     open_hours = _sorted;
     let open_days = Object.keys(open_hours); // in sorted order.
@@ -142,66 +134,64 @@ async function getOpenStatusAttribute(meta_data) {
       let closing_times = [];
       let opening_times = [];
       console.log(open_hours[today]);
+    
+
+      for(let time_slot in open_hours[today]) {
+        closing_times.push(time_slot['close']);
+        opening_times.push(time_slot['open']);
+      }
+
+      if (current_time < max(closing_times)) {
+        let _diff_in_next_open_time = 1440; // max value  =  no of minutes in 24hrs (i.e. 1440)
+        let _next_open_time = null;
+
+        for (let i = 0; i < (opening_times).length; i++) {
+          // If the current time matches a open time slot.
+          if (opening_times[i] <= current_time && current_time < closing_times[i]) {
+            let _diffInMinutes = current_time - closing_times[i];
+            if (_diffInMinutes < 60) {
+              // less then 1hour before closing the facility
+              return 'Closes in '+
+              _diffInMinutes+
+              ' '+
+              (_diffInMinutes > 1 ? 'minutes' : 'minute');
+            }
+            else if(_diffInMinutes < 120) {
+              // less then 2 hours before closing the facility
+              return 'Open till '.str_replace(':00', '', closing_times[i].format('g:i a')); // using open_hours to get beautified close time string.
+            } else {
+              return 'Open Now';
+            }
+          } else {
+            // data if the current time is not in any of the open slots
+            if (opening_times[i] > current_time) {
+              let _diff = current_time.diffInMinutes(opening_times[i]);
+              if (_diff < _diff_in_next_open_time) {
+                _diff_in_next_open_time = _diff;
+                _next_open_time = opening_times[i];
+              }
+            }
+          }
+        }
+
+        if (_diff_in_next_open_time < 60) {
+          return 'Opens in '.
+          _diff_in_next_open_time.
+          ' '.
+          (_diff_in_next_open_time > 1 ? 'minutes' : 'minute');
+        } else {
+          _next_open_time = str_replace(':00', '', _next_open_time.format('g:i a'));
+          return 'Opens at '._next_open_time;
+        }
+      } else {
+        return this.nextAvailibilityStr(open_hours, open_days);
+      }
+    } else {
+      return this.nextAvailibilityStr(open_hours, open_days);
     }
+  } else {
+    return 'Open 24x7';
   }
-
-  //     for(let time_slot in open_hours[today]) {
-  //       closing_times.push(time_slot['close']);
-  //       array_push(opening_times, Carbon::parse(_time_slot['open']));
-  //     }
-
-  //     if (current_time < max(closing_times)) {
-  //       _diff_in_next_open_time = 1440; // max value  =  no of minutes in 24hrs (i.e. 1440)
-  //       _next_open_time = null;
-
-  //       for (i = 0; i < count(opening_times); i++) {
-  //         // If the current time matches a open time slot.
-  //         if (opening_times[i] <= current_time && current_time < closing_times[i]) {
-  //           _diffInMinutes = current_time.diffInMinutes(closing_times[i]);
-  //           if (_diffInMinutes < 60) {
-  //             // less then 1hour before closing the facility
-  //             return 'Closes in '.
-  //             _diffInMinutes.
-  //             ' '.
-  //             (_diffInMinutes > 1 ? 'minutes' : 'minute');
-  //           }
-  //           elseif(_diffInMinutes < 120) {
-  //             // less then 2 hours before closing the facility
-  //             return 'Open till '.str_replace(':00', '', closing_times[i].format('g:i a')); // using open_hours to get beautified close time string.
-  //           } else {
-  //             return 'Open Now';
-  //           }
-  //         } else {
-  //           // data if the current time is not in any of the open slots
-  //           if (opening_times[i] > current_time) {
-  //             _diff = current_time.diffInMinutes(opening_times[i]);
-  //             if (_diff < _diff_in_next_open_time) {
-  //               _diff_in_next_open_time = _diff;
-  //               _next_open_time = opening_times[i];
-  //             }
-  //           }
-  //         }
-  //       }
-
-  //       if (_diff_in_next_open_time < 60) {
-  //         return 'Opens in '.
-  //         _diff_in_next_open_time.
-  //         ' '.
-  //         (_diff_in_next_open_time > 1 ? 'minutes' : 'minute');
-  //       } else {
-  //         _next_open_time = str_replace(':00', '', _next_open_time.format('g:i a'));
-  //         return 'Opens at '._next_open_time;
-  //       }
-  //     } else {
-  //       return this.nextAvailibilityStr(open_hours, open_days);
-  //     }
-  //   } else {
-  //     return this.nextAvailibilityStr(open_hours, open_days);
-  //   }
-  // } else {
-  //   return 'Open 24x7';
-  // }
-  return "";
 }
 async function get24x7Attribute(facility_id) {}
 async function getFullAddressAttribute(
