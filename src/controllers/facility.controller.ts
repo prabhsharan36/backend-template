@@ -389,6 +389,7 @@ class FacilityController {
           req.params,
           this.validationRules()
         );
+      // console.log(req);
 
       const result = await this.facilityService.listing({
         pageType,

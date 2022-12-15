@@ -1,6 +1,9 @@
 import _ from "lodash";
 import { getQueryManager } from "../core/dataLayes/manager";
+import { Area } from "../entity/area.entity";
 import { City } from "../entity/city.entity";
+import { Country } from "../entity/country.entity";
+import { DoctorVisit } from "../entity/doctorVisit.entity";
 import { Facility } from "../entity/facility.entity";
 import { FacilityAmenity } from "../entity/facilityAmenity.entity";
 import { FacilityPhone } from "../entity/facilityPhone.entity";
@@ -26,24 +29,34 @@ class FacilityRepository {
         "facility.id",
         "facility.type",
         "facility.name",
+        "facility.status_id",
         // "facility.slug",
-        // "facility.url",
+        // "url",
         "facility.established_in",
         "facility.website",
         "facility.beds",
         "facility.ambulance",
-        // "facility.calling_number",
+        "facility.city_id",
+        "facility.area_id",
+        "facility.address_line",
+        "facility.additional_address_line",
+        "facility.landmark",
         "facility.emergency_number",
-        // "facility.doctors_count",
-        // "facility.map_link",
-        // "facility.open_status",
-        // "facility.24x7",
-        // "facility.open_hours",
+        "facility.latitude",
+        "facility.about",
+        "facility.meta_data",
+        "facility.longitude",
         "facility.country_id",
         "media.name",
         "slug.slug",
         "faminity.name",
+        "faminity.type",
+        "city.name",
+        "area.metadata",
+        "area.name",
+        "country.name",
         "fphone.phone",
+        // "doctorVisit.doctor_id",
       ])
       .leftJoin(
         Media,
@@ -61,7 +74,16 @@ class FacilityRepository {
         "faminity.facility_id = facility.id"
       )
       .leftJoin(FacilityPhone, "fphone", "fphone.facility_id = facility.id")
+      .leftJoin(Area, "area", "area.id=facility.area_id")
+      .leftJoin(City, "city", "city.id=facility.city_id")
+      .leftJoin(Country, "country", "country.id=facility.country_id")
+      // .leftJoin(
+      //   DoctorVisit,
+      //   "doctorVisit",
+      //   "doctorVisit.facility_id=facility.id"
+      // )
       .where("facility.status_id = 1");
+
     if (pageType === "hospital_city_listing") {
       // TODO
       // $this->listingType == 'hospital_city_listing' ? ['area.slug', 'city.slug'] : ['area', 'city'],
@@ -147,6 +169,7 @@ class FacilityRepository {
     this.facilities.andWhere("facility.type = :facilityType", {
       facilityType,
     });
+    // console.log(this.facilities);
 
     if (cityId) {
       this.facilities.andWhere("facility.city_id = :cityId", { cityId });
@@ -211,12 +234,14 @@ class FacilityRepository {
     ) {
       facilityType = "Clinic";
     }
+    // console.log(facilityType);
 
     this.facilities
       .andWhere("facility.type = :facilityType", { facilityType })
       .andWhere("facility.country_id = :countryId", {
         countryId: city_state_country,
       });
+    // console.log(this.facilities);
 
     if (category) {
       const ServiceIds = await this.categoryRepo.getCategoryServiceIds(
@@ -336,24 +361,31 @@ class FacilityRepository {
           )
           .where("sp.service_id IN (:...serviceIds)", { serviceIds });
       }
+      // console.log(this.facilities);
     } catch (error) {
-      console.log(error, "errro");
+      console.log(error, "error");
     }
   }
 
   protected async fetchFacilities() {
-    let orderedFacilities: number[] = [];
-    let pageMeta = await cls.get("page")?.meta_data?.ordered_facilities?.length;
+    // let orderedFacilities: number[] = [];
+    // let pageMeta = await cls.get("page")?.meta_data?.ordered_facilities;
+    // let pageMetaLength = pageMeta.length;
+    // // console.log(pageMeta);
 
-    if (pageMeta > 0) {
-      orderedFacilities = _.map(pageMeta, "id");
-    }
-    console.log(orderedFacilities, "orderedFacilities");
-    if (orderedFacilities?.length > 0) {
-      this.facilities = this.facilities.orderBy(
-        `field(facility.id, ${orderedFacilities}) DESC`
-      );
-    }
+    // if (pageMetaLength > 0) {
+    //   orderedFacilities = _.map(pageMeta, "id");
+    // }
+    // if (orderedFacilities?.length > 0) {
+    //   this.facilities = this.facilities.orderBy(
+    //     `field(facility.id, ${orderedFacilities}) `,
+    //     `DESC`
+    //   );
+    // }
+    // console.log(orderedFacilities, "orderedFacilities");
+    // console.log(cls.get("page")?.meta_data);
+
+    // console.log(this.facilities);
     this.facilities = await this.facilities.limit(10).getRawMany();
   }
 }

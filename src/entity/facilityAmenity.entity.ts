@@ -4,7 +4,11 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
+  ManyToOne,
+  JoinColumn,
 } from "typeorm";
+import { Facility } from "./facility.entity";
 
 @Entity({ name: "facility_amenities" })
 export class FacilityAmenity {
@@ -29,4 +33,7 @@ export class FacilityAmenity {
   /**
    * Relationships
    */
+  @ManyToOne(() => Facility, (facility) => facility.facilityAmenities)
+  @JoinColumn({ name: "facility_id", referencedColumnName: "id" })
+  facility!: Facility;
 }

@@ -8,6 +8,7 @@ import {
   OneToMany,
 } from "typeorm";
 import { DoctorVisit } from "./doctorVisit.entity";
+import { FacilityAmenity } from "./facilityAmenity.entity";
 
 @Entity({ name: "facilities" })
 export class Facility {
@@ -82,4 +83,6 @@ export class Facility {
 
   @OneToMany(() => DoctorVisit, (doctorVisit) => doctorVisit.facility)
   doctorVisits!: DoctorVisit[];
+  @OneToMany(() =>FacilityAmenity, (facilityAmenity)=>facilityAmenity.facility)
+  facilityAmenities!: FacilityAmenity[];
 }
