@@ -1,7 +1,7 @@
 {
-  "name": "clinicspots-server-new",
+  "name": "clead-backend",
   "version": "1.0.0",
-  "description": "Clinicspots Backend",
+  "description": "Clead Backend",
   "main": "build/app.js",
   "scripts": {
     "clean": "rimraf build/*",
