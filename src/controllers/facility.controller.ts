@@ -60,7 +60,7 @@ class FacilityController {
                 : false;
             return {
               isValid: IsUrlContainHospital && IsCategoryHasListingType,
-              category: slugs[0],
+              category,
             };
           }
           return;
@@ -80,6 +80,7 @@ class FacilityController {
             const category = await this.categoryRepo.getCategoryBySlug(
               slugs?.[0]?.slug
             );
+            
             const IsCategoryHasListingType =
               category?.category_facility_listing_type === "Clinic" ||
               category?.category_facility_listing_type === "Both"

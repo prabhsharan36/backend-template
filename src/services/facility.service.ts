@@ -64,7 +64,7 @@ class FacilityService {
           },
           area: {
             name: facility?.area_name,
-            nearby_localities: facility?.area_metadata.nearby_localities,
+            nearby_localities: facility?.area_metadata?.nearby_localities,
           },
           country: {
             name: facility?.country_name,
@@ -137,11 +137,6 @@ class FacilityService {
             .toLocaleLowerCase()
         );
 
-        console.log(
-          closingTimes,
-          Math.max(...closingTimes),
-          "Math.max(...closingTimes)"
-        );
         if (CurrentTime < Math.max(...closingTimes)) {
           let diffInNextOpenTime = 1440; // max value  =  no of minutes in 24hrs (i.e. 1440)
           let nextOpenTime;

@@ -56,8 +56,13 @@ class FacilityRepository {
         "area.name",
         "country.name",
         "fphone.phone",
-        // "doctorVisit.doctor_id",
+        "facility",
       ])
+      // .distinct(true)
+      .addSelect(
+        "(select Count(DISTINCT(dv.doctor_id)) from doctor_visits dv where dv.facility_id = facility.id)",
+        "doctors_count"
+      )
       .leftJoin(
         Media,
         "media",
@@ -77,11 +82,6 @@ class FacilityRepository {
       .leftJoin(Area, "area", "area.id=facility.area_id")
       .leftJoin(City, "city", "city.id=facility.city_id")
       .leftJoin(Country, "country", "country.id=facility.country_id")
-      // .leftJoin(
-      //   DoctorVisit,
-      //   "doctorVisit",
-      //   "doctorVisit.facility_id=facility.id"
-      // )
       .where("facility.status_id = 1");
 
     if (pageType === "hospital_city_listing") {
@@ -157,6 +157,7 @@ class FacilityRepository {
     city_state_country,
   }) {
     let facilityType = "Hospital";
+    let listingType = "Country";
     if (
       [
         "clinic_category_india_listing', 'clinic_category_city_listing",
@@ -164,26 +165,39 @@ class FacilityRepository {
     ) {
       facilityType = "Clinic";
     }
-    let cityId = city_state_country;
+    if (
+      [
+        "hospital_category_city_listing",
+        "clinic_category_city_listing",
+      ].includes(pageType)
+    ) {
+      listingType = "City";
+    }
 
     this.facilities.andWhere("facility.type = :facilityType", {
       facilityType,
     });
-    // console.log(this.facilities);
 
-    if (cityId) {
-      this.facilities.andWhere("facility.city_id = :cityId", { cityId });
+    if (listingType === "Country") {
+      this.facilities.andWhere("facility.country_id = :countryId", {
+        countryId: 101, // for India
+      });
     }
-    // console.log(cityId);
+
+    if (listingType === "City") {
+      this.facilities.andWhere("facility.city_id = :cityId", {
+        cityId: city_state_country,
+      });
+    }
 
     const ServiceIds = await this.categoryRepo.getCategoryServiceIds(
       category.category_id
     );
+
     const SpecializationIds =
       await this.categoryRepo.getCategorySpecializationIds(
         category.category_id
       );
-    // console.log(SpecializationIds, "SpecializationIds");
 
     this.addServicesSpecializationsQuery(ServiceIds, SpecializationIds);
   }
@@ -204,8 +218,8 @@ class FacilityRepository {
 
     this.facilities
       .andWhere("facility.type = :facilityType", { facilityType })
-      .innerJoin(City, "city", "city.id = facility.city_id")
-      .innerJoin(State, "state", "state.id = city.state_id")
+      .innerJoin(City, "fcity", "fcity.id = facility.city_id")
+      .innerJoin(State, "state", "state.id = fcity.state_id")
       .andWhere("state.id = :stateId", { stateId: city_state_country });
 
     if (category) {
@@ -268,9 +282,10 @@ class FacilityRepository {
     if (["clinic_city_listing", "clinic_area_listing"].includes(pageType)) {
       facilityType = "Clinic";
     }
+
     this.facilities.andWhere("facility.type = :facilityType", { facilityType });
     if (cityId && !area) {
-      this.facilities.andWhere("facility.city_id = cityId", { cityId });
+      this.facilities.andWhere("facility.city_id = :cityId", { cityId });
     } else if (cityId && area) {
       if (area?.area_meta_data?.nearby_localities?.length > 0) {
         // Ids of 5 nearby areas to the main area. Ids are odered in increasing order of distance from main Area.
@@ -325,6 +340,7 @@ class FacilityRepository {
             10
           ) || []
         ) || [];
+      // console.log(JSON.stringify(serviceIds), specializationIds);
 
       if (serviceIds?.length > 0 && specializationIds?.length > 0) {
         this.facilities
@@ -344,7 +360,7 @@ class FacilityRepository {
           .orWhere("sp.service_id IN (:...serviceIds)", { serviceIds });
       } else if (serviceIds?.length === 0 && specializationIds?.length > 0) {
         this.facilities
-          .join(
+          .leftJoin(
             SpecializationOwner,
             "so",
             "so.specialization_owners_id = facility.id AND so.specialization_owners_id = 'Facility'"
@@ -354,39 +370,49 @@ class FacilityRepository {
           });
       } else if (serviceIds?.length > 0 && specializationIds?.length === 0) {
         this.facilities
-          .join(
+          .leftJoin(
             ServiceProvider,
             "sp",
             "sp.specializationIds = facility.id AND sp.service_providers_type = 'Facility'"
           )
           .where("sp.service_id IN (:...serviceIds)", { serviceIds });
       }
-      // console.log(this.facilities);
     } catch (error) {
-      console.log(error, "error");
+      console.error("ERROR => ", error);
     }
   }
 
   protected async fetchFacilities() {
-    // let orderedFacilities: number[] = [];
-    // let pageMeta = await cls.get("page")?.meta_data?.ordered_facilities;
-    // let pageMetaLength = pageMeta.length;
-    // // console.log(pageMeta);
+    let orderedFacilities: number[] = [];
+    let pageMeta = await cls.get("page")?.meta_data?.ordered_facilities;
+    let pageMetaLength = pageMeta.length;
+    if (pageMetaLength > 0) {
+      orderedFacilities = _.map(pageMeta, "id");
+    }
+    orderedFacilities = orderedFacilities.reverse();
 
-    // if (pageMetaLength > 0) {
-    //   orderedFacilities = _.map(pageMeta, "id");
-    // }
-    // if (orderedFacilities?.length > 0) {
-    //   this.facilities = this.facilities.orderBy(
-    //     `field(facility.id, ${orderedFacilities}) `,
-    //     `DESC`
-    //   );
-    // }
-    // console.log(orderedFacilities, "orderedFacilities");
-    // console.log(cls.get("page")?.meta_data);
+    if (orderedFacilities?.length > 0) {
+      // console.log(orderedFacilities?.length);
+      this.facilities = this.facilities.orderBy(
+        `field(facility.id, ${orderedFacilities})`,
+        "DESC"
+      ).orWhere('facility.id IN (:...orderedFacilities)', {orderedFacilities});
+    }
+    console.log(orderedFacilities);
 
-    // console.log(this.facilities);
-    this.facilities = await this.facilities.limit(10).getRawMany();
+    this.facilities = await this.facilities
+      // .groupBy("facility.id")
+      // .orderBy("doctors_count", "DESC")
+      .limit(10)
+      .getRawMany();
+    // .getQuery();
+    // console.log(
+    //   JSON.stringify(
+    //     this.facilities.map((obj) => {
+    //       return obj.facility_id;
+    //     })
+    //   )
+    // );
   }
 }
 

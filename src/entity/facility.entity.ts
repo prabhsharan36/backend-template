@@ -83,6 +83,7 @@ export class Facility {
 
   @OneToMany(() => DoctorVisit, (doctorVisit) => doctorVisit.facility)
   doctorVisits!: DoctorVisit[];
+  
   @OneToMany(() =>FacilityAmenity, (facilityAmenity)=>facilityAmenity.facility)
   facilityAmenities!: FacilityAmenity[];
 }
